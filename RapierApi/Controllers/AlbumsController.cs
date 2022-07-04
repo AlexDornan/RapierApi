@@ -17,7 +17,7 @@ namespace RapierApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Album album)
+        public async Task<IActionResult> Post([FromForm] Album album)
         {
             await _dbContext.Albums.AddAsync(album);
             await _dbContext.SaveChangesAsync();

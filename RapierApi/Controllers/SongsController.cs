@@ -18,7 +18,7 @@ namespace RapierApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Song song)
+        public async Task<IActionResult> Post([FromForm] Song song)
         {
             song.UploadedDate = DateTime.Now;
             await _dbContext.Songs.AddAsync(song);
