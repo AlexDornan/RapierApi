@@ -37,5 +37,12 @@ namespace RapierApi.Controllers
                                  }).ToListAsync();
             return Ok(artists);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ArtistDetails(int artistId)
+        {
+            var artistDetails = await _dbContext.Artists.Where(a => a.Id == artistId).Include(a => a.Songs).ToListAsync();
+            return Ok(artistDetails);
+        }
     }
 }
