@@ -29,8 +29,10 @@ namespace RapierApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllSongs()
+        public async Task<IActionResult> GetAllSongs(int? pageNumber, int? pageSize)
         {
+            int currentPageNumber = pageNumber ?? 1;
+            int currentPageSize = pageSize ?? 1;
             var songs = await (from song in _dbContext.Songs
                                select new
                                {
@@ -38,7 +40,7 @@ namespace RapierApi.Controllers
                                    song.Title,
                                    song.Duration
                                }).ToListAsync();
-            return Ok(songs);
+            return Ok(songs.Skip((currentPageNumber - 1) * currentPageSize).Take(currentPageSize));
         }
 
         [HttpGet("[action]")]
@@ -52,6 +54,34 @@ namespace RapierApi.Controllers
                                    song.Title,
                                    song.Duration
                                }).ToListAsync();
+            return Ok(songs);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> NewSongs()
+        {
+            var songs = await (from song in _dbContext.Songs
+                               orderby song.UploadedDate descending
+                               select new
+                               {
+                                   song.Id,
+                                   song.Title,
+                                   song.Duration
+                               }).Take(5).ToListAsync();
+            return Ok(songs);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> SearchSongs(string query)
+        {
+            var songs = await (from song in _dbContext.Songs
+                               where song.Title.StartsWith(query)
+                               select new
+                               {
+                                   song.Id,
+                                   song.Title,
+                                   song.Duration
+                               }).Take(5).ToListAsync();
             return Ok(songs);
         }
     }
